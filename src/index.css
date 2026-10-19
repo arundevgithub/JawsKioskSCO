@@ -1,0 +1,570 @@
+:root {
+  --color-bg: #0b1f3a;
+  --color-surface: #ffffff;
+  --color-text: #0b1f3a;
+  --color-primary: #0b5fff;
+  --color-primary-dark: #0040bf;
+  --color-secondary: #5a6472;
+  --color-focus: #ffcc00;
+  --color-border: #c9ced6;
+  --color-success-bg: #e6f6ea;
+  --color-success-text: #0b4a1f;
+  /* Wide enough to grab with a finger (44px minimum touch target). */
+  --scrollbar-size: 44px;
+  /* Everything is sized in rem, so the whole screen scales with the window
+     height: full size (20px) on a full-screen kiosk, smaller in a short
+     browser window so every screen still fits without scrolling. */
+  font-size: clamp(16px, 2.6vh, 20px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.kiosk {
+  display: flex;
+  flex-direction: column;
+  /* A kiosk screen never scrolls: everything fits the window, and only the
+     item rows of an .item-table scroll when there are too many to show. */
+  height: 100vh;
+  overflow: hidden;
+}
+
+.kiosk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-bg);
+  color: #fff;
+  padding: 0.6rem 2rem;
+}
+
+.kiosk-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.kiosk-step {
+  margin: 0;
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+.kiosk-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 2rem;
+}
+
+/* Test-only stand-ins for the scanner, card reader and cash acceptor sit in
+   the empty middle of the header, so they take no room from the screen. */
+.sim-toolbar {
+  position: fixed;
+  top: 0.5rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sim-toolbar .sim-button {
+  pointer-events: auto;
+}
+
+.sim-button {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+  border: 2px dashed #888;
+  border-radius: 8px;
+  background: #f4f4f4;
+  color: #333;
+  cursor: pointer;
+}
+
+.sim-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.screen {
+  background: var(--color-surface);
+  border-radius: 12px;
+  padding: 1.25rem 2rem;
+  width: 100%;
+  max-width: 1100px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Everything on a screen keeps its size except the item list (directly, or
+   inside the receipt), which gives up height when the window is short. */
+.screen > * {
+  flex-shrink: 0;
+}
+
+.screen > .item-table,
+.screen > .receipt {
+  flex-shrink: 1;
+  min-height: 0;
+}
+
+.screen-heading {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  outline: none;
+}
+
+.screen-heading:focus-visible {
+  outline: 4px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.screen-intro {
+  font-size: 1.15rem;
+  line-height: 1.4;
+  margin: 0 0 0.75rem;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:disabled,
+button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.primary-button,
+.secondary-button {
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 1rem 1.75rem;
+  border-radius: 10px;
+  min-height: 64px;
+  border: 3px solid transparent;
+}
+
+.primary-button {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.primary-button:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--color-primary-dark);
+}
+
+.secondary-button {
+  background: #fff;
+  color: var(--color-secondary);
+  border-color: var(--color-border);
+}
+
+button:focus-visible {
+  outline: 4px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.field-group {
+  margin-bottom: 1.5rem;
+}
+
+.phone-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-rows: auto auto auto 1fr;
+  column-gap: 1.5rem;
+  align-items: start;
+}
+
+.phone-entry > * {
+  grid-column: 1;
+}
+
+.phone-entry .numpad {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  margin: 0;
+}
+
+.phone-entry__intro {
+  margin: 0 0 1rem;
+}
+
+.phone-entry .field-group {
+  margin-bottom: 1rem;
+}
+
+.phone-entry .button-row {
+  margin-top: 0.5rem;
+}
+
+.field-label {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.phone-display {
+  font-size: 1.5rem;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  width: 100%;
+  max-width: 320px;
+  min-height: 1.5em;
+  border: 3px solid var(--color-border);
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.phone-display-empty {
+  color: var(--color-secondary);
+}
+
+.field-hint {
+  margin: 0.5rem 0 0;
+  font-size: 1rem;
+  color: var(--color-secondary);
+}
+
+.error-text {
+  color: #b00020;
+  font-weight: 600;
+}
+
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  max-width: 420px;
+  margin: 1.25rem 0 0;
+}
+
+.numpad-cell {
+  display: block;
+}
+
+.numpad-key {
+  width: 100%;
+}
+
+.numpad-key {
+  font-size: 1.5rem;
+  font-weight: 600;
+  min-height: 64px;
+  border-radius: 10px;
+  border: 3px solid var(--color-border);
+  background: #f5f6f8;
+  color: var(--color-text);
+}
+
+.numpad-key--wide {
+  font-size: 1.1rem;
+}
+
+.numpad-key:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: #e7eaef;
+}
+
+.summary-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 1.15rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.4rem;
+}
+
+.summary-row dt {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.summary-row dd {
+  margin: 0;
+  text-align: right;
+}
+
+.summary-row--total {
+  font-size: 1.4rem;
+  font-weight: 700;
+  border-bottom: none;
+}
+
+/* The table parts are laid out as blocks and grid rows so the item rows can
+   scroll on their own. ItemTable adds explicit table roles to keep JAWS
+   table navigation working. */
+.item-table {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  font-size: 1.1rem;
+  border: 1px solid var(--color-border);
+}
+
+.item-table thead,
+.item-table tfoot {
+  display: block;
+  flex-shrink: 0;
+}
+
+.item-table thead {
+  border-bottom: 2px solid var(--color-border);
+}
+
+.item-table tfoot {
+  border-top: 2px solid var(--color-border);
+}
+
+.item-table tr {
+  display: grid;
+  grid-template-columns: 1fr 8rem;
+}
+
+/* Once the item rows scroll, line the heading and total columns up with
+   them: the rows give up --scrollbar-size on the right to the scrollbar. */
+.item-table--scrolls thead tr,
+.item-table--scrolls tfoot tr {
+  padding-right: var(--scrollbar-size);
+}
+
+.item-table th,
+.item-table td {
+  display: block;
+  padding: 0.45rem 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.item-table th + th,
+.item-table th + td,
+.item-table td + td {
+  border-left: 1px solid var(--color-border);
+}
+
+.item-table tr:last-child > * {
+  border-bottom: none;
+}
+
+.item-table tfoot th,
+.item-table tfoot td {
+  font-weight: 700;
+}
+
+/* Only the item rows scroll: they take whatever height the window has left,
+   so the totals and the buttons below never move off screen. */
+.item-table__items {
+  display: block;
+  flex: 0 1 auto;
+  min-height: 5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.item-table__empty {
+  grid-column: 1 / -1;
+}
+
+/* Touch-sized scrollbar. Only the ::-webkit-scrollbar pseudo-elements are
+   used: setting scrollbar-width or scrollbar-color would make Chrome ignore
+   them and fall back to its thin default bar. */
+.item-table__items::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+}
+
+.item-table__items::-webkit-scrollbar-track {
+  background: #e7eaef;
+  border-left: 1px solid var(--color-border);
+}
+
+.item-table__items::-webkit-scrollbar-thumb {
+  background: var(--color-secondary);
+  border: 6px solid #e7eaef;
+  border-radius: 999px;
+}
+
+.item-table__items::-webkit-scrollbar-thumb:active {
+  background: var(--color-primary-dark);
+}
+
+.status-banner {
+  min-height: 2rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.card-reader-status {
+  min-height: 2rem;
+}
+
+.card-reader-status .status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0;
+}
+
+.payment-steps {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+}
+
+.payment-step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-secondary);
+}
+
+.payment-step__marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  font-size: 0.8rem;
+}
+
+.payment-step--current {
+  color: var(--color-primary-dark);
+}
+
+.payment-step--current .payment-step__marker {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: var(--color-surface);
+}
+
+.payment-step--done {
+  color: var(--color-success-text);
+}
+
+.spinner {
+  flex: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary-dark);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 3s;
+  }
+}
+
+.confirmation-text {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.button-row .confirmation-text {
+  align-self: center;
+  margin: 0;
+}
+
+.receipt {
+  /* Items on the left, store and payment details on the right. */
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0 1.5rem;
+  border: 2px dashed var(--color-border);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.receipt > .item-table {
+  grid-column: 1;
+  grid-row: 1 / -1;
+}
+
+.receipt__header,
+.receipt__details {
+  grid-column: 2;
+}
+
+.receipt__details .summary-list {
+  margin: 0.75rem 0 0;
+}
+
+.receipt-line {
+  margin: 0 0 0.25rem;
+}
+
+.kiosk-footer {
+  text-align: center;
+  color: #d7deea;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+
+.kiosk-footer p {
+  margin: 0;
+}
