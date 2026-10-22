@@ -7,6 +7,9 @@ import LoyaltyFoundScreen from './components/LoyaltyFoundScreen'
 import ScanningScreen from './components/ScanningScreen'
 import PaymentScreen from './components/PaymentScreen'
 import ReceiptScreen from './components/ReceiptScreen'
+import KeyDebugPanel from './components/KeyDebugPanel'
+
+const KEY_DEBUG = new URLSearchParams(window.location.search).has('keydebug')
 
 const SCREEN = {
   WELCOME: 'welcome',
@@ -140,6 +143,8 @@ export default function App() {
       <footer className="kiosk-footer">
         <p>Demo kiosk for JAWS-for-Kiosk accessibility testing. No real payment is processed.</p>
       </footer>
+
+      {KEY_DEBUG && <KeyDebugPanel />}
     </div>
   )
 }

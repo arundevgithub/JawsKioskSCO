@@ -568,3 +568,52 @@ button:focus-visible {
 .kiosk-footer p {
   margin: 0;
 }
+
+/* Temporary key-event debug overlay (?keydebug). */
+.key-debug {
+  position: fixed;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  width: min(40rem, calc(100vw - 1rem));
+  max-height: 45vh;
+  overflow: auto;
+  padding: 0.5rem 0.75rem;
+  border: 2px dashed #888;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #e6e6e6;
+  font: 0.75rem/1.4 Consolas, "Courier New", monospace;
+  z-index: 10;
+}
+
+.key-debug__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.key-debug__header button {
+  font: inherit;
+  padding: 0.1rem 0.5rem;
+  cursor: pointer;
+}
+
+.key-debug__empty {
+  margin: 0;
+  opacity: 0.7;
+}
+
+.key-debug__log {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.key-debug__time {
+  opacity: 0.6;
+}
+
+.key-debug__type {
+  color: var(--color-focus);
+}
