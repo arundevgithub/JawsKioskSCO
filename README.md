@@ -21,7 +21,7 @@ no server and no real payment processing.
    been scanned; subtotal/tax/total update live.
 5. **Payment** — "Pay with Credit Card" simulates sending the total to a
    card reader/processor and always approves after a short delay.
-6. **Receipt** — full itemized receipt with payment and loyalty details;
+6. **Receipt** — item count and totals (no item list) with payment and loyalty details;
    "Print Receipt" simulates sending the receipt to a kiosk printer.
 
 ## Project structure
@@ -79,7 +79,7 @@ can drive the whole transaction without sight:
 - **Native, semantic elements.** All actions are real `<button>` elements
   (never `<div onClick>`), the phone number is a read-only text display filled only by the on-screen
   numpad (no `<input>`, since a kiosk has no keyboard), and the
-  scanned-items / receipt tables use `<caption>`, `<th scope="col">`/
+  scanned-items table uses `<caption>`, `<th scope="col">`/
   `<th scope="row">`, so a screen reader's table navigation commands work
   correctly.
 - **Large hit targets and visible focus.** Buttons are at least 64px tall
@@ -110,8 +110,8 @@ can drive the whole transaction without sight:
 6. Activate **Proceed to Payment**, then **Pay with Credit Card** — you
    should hear a processing announcement, then an assertive "Payment
    approved" announcement that interrupts whatever was being read.
-7. On the receipt screen, verify the table reads correctly with your
-   reader's table-navigation keys, then activate **Print Receipt** and
+7. On the receipt screen, verify the item count and totals read correctly
+   with the arrow keys, then activate **Print Receipt** and
    confirm you hear the printed confirmation.
 
 This script works with NVDA, VoiceOver, or Narrator too — it's useful to

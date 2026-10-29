@@ -127,14 +127,13 @@ body {
   overflow: hidden;
 }
 
-/* Everything on a screen keeps its size except the item list (directly, or
-   inside the receipt), which gives up height when the window is short. */
+/* Everything on a screen keeps its size except the item list, which gives
+   up height when the window is short. */
 .screen > * {
   flex-shrink: 0;
 }
 
-.screen > .item-table,
-.screen > .receipt {
+.screen > .item-table {
   flex-shrink: 1;
   min-height: 0;
 }
@@ -530,24 +529,32 @@ button:focus-visible {
 }
 
 .receipt {
-  /* Items on the left, store and payment details on the right. */
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 0 1.5rem;
+  /* A single narrow column, like a printed receipt. */
+  width: 100%;
+  max-width: 640px;
   border: 2px dashed var(--color-border);
-  padding: 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
 }
 
-.receipt > .item-table {
-  grid-column: 1;
-  grid-row: 1 / -1;
+/* Tighter rows than elsewhere so the whole receipt fits without scrolling. */
+.receipt .summary-list {
+  gap: 0.3rem;
 }
 
-.receipt__header,
-.receipt__details {
-  grid-column: 2;
+.receipt .summary-row {
+  font-size: 1.05rem;
+  padding-bottom: 0.25rem;
+}
+
+.receipt .summary-row--total {
+  font-size: 1.25rem;
+}
+
+.receipt__header {
+  text-align: center;
+  border-bottom: 2px dashed var(--color-border);
+  padding-bottom: 0.5rem;
 }
 
 .receipt__details .summary-list {

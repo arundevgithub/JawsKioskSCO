@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import ScreenHeading from './ScreenHeading'
-import ItemTable from './ItemTable'
 import { printReceipt } from '../api/mockApi'
 
 export default function ReceiptScreen({ items, totals, payment, customer, onStartOver, announce, announceAssertive }) {
@@ -36,18 +35,24 @@ export default function ReceiptScreen({ items, totals, payment, customer, onStar
           <p className="receipt-line">{now.toLocaleString()}</p>
         </div>
 
-        <ItemTable
-          caption="Purchased items"
-          items={items}
-          totals={[
-            { label: 'Subtotal', value: totals.subtotal },
-            { label: 'Tax', value: totals.tax },
-            { label: 'Total paid', value: totals.total }
-          ]}
-        />
-
         <div className="receipt__details">
           <dl className="summary-list">
+            <div className="summary-row">
+              <dt>Items</dt>
+              <dd>{items.length}</dd>
+            </div>
+            <div className="summary-row">
+              <dt>Subtotal</dt>
+              <dd>{formatMoney(totals.subtotal)}</dd>
+            </div>
+            <div className="summary-row">
+              <dt>Tax</dt>
+              <dd>{formatMoney(totals.tax)}</dd>
+            </div>
+            <div className="summary-row summary-row--total">
+              <dt>Total paid</dt>
+              <dd>{formatMoney(totals.total)}</dd>
+            </div>
             {payment.method === 'cash' ? (
               <>
                 <div className="summary-row">

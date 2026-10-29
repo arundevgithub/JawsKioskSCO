@@ -22,7 +22,12 @@ export default function ScanningScreen({ items, onItemScanned, onProceedToPaymen
     onItemScanned(item)
     setIsScanning(false)
 
-    const itemPhrase = `${item.description}, ${formatMoney(item.price)}.`
+    // `items` doesn't include the new item yet, so total it up here.
+    const newSubtotal = round2(subtotal + item.price)
+    const newTotal = round2(newSubtotal + round2(newSubtotal * TAX_RATE))
+    const newCount = items.length + 1
+    const countPhrase = `${newCount} ${newCount === 1 ? 'item' : 'items'}`
+    const itemPhrase = `${item.description}, ${formatMoney(item.price)}. ${countPhrase}, total due ${formatMoney(newTotal)}.`
     // After the last scan, tell the user where to go next.
     announce(isLastItem ? `${itemPhrase} Press Proceed to Payment to continue.` : itemPhrase)
   }
