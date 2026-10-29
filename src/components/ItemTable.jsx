@@ -8,9 +8,11 @@ import { useId, useLayoutEffect, useRef, useState } from 'react'
 // explicit roles put them back and JAWS table navigation (T, Ctrl+Alt+Arrows)
 // keeps working. tabIndex -1 on the scrolling body stops Chrome adding it to
 // the Tab order as an unnamed stop.
-export default function ItemTable({ caption, items, totals, emptyText, scrollToNewest = false }) {
+export default function ItemTable({ caption, items, totals, emptyText, focusNewest = false }) {
   const captionId = useId()
   const bodyRef = useRef(null)
+  const newestRowRef = useRef(null)
+  const prevCountRef = useRef(items.length)
   const [scrolls, setScrolls] = useState(false)
 
   // The scrollbar only shows once the rows overflow; the heading and total
@@ -27,9 +29,13 @@ export default function ItemTable({ caption, items, totals, emptyText, scrollToN
   useLayoutEffect(() => {
     const body = bodyRef.current
     setScrolls(body.scrollHeight > body.clientHeight)
-    // Keep the newest scanned item in view for sighted shoppers.
-    if (scrollToNewest) body.scrollTop = body.scrollHeight
-  }, [items.length, scrollToNewest])
+    // When an item is added, focus its row: JAWS moves the virtual cursor to
+    // it and reads it, and focus() scrolls it into view for sighted shoppers.
+    // Only on growth, so mounting with items doesn't steal focus from the h1.
+    const grew = items.length > prevCountRef.current
+    prevCountRef.current = items.length
+    if (focusNewest && grew) newestRowRef.current?.focus()
+  }, [items.length, focusNewest])
 
   return (
     <table
@@ -56,8 +62,13 @@ export default function ItemTable({ caption, items, totals, emptyText, scrollToN
             </td>
           </tr>
         ) : (
-          items.map((item) => (
-            <tr key={item.lineId} role="row">
+          items.map((item, index) => (
+            <tr
+              key={item.lineId}
+              role="row"
+              ref={index === items.length - 1 ? newestRowRef : null}
+              tabIndex={focusNewest ? -1 : undefined}
+            >
               <td role="cell">{item.description}</td>
               <td role="cell">{formatMoney(item.price)}</td>
             </tr>

@@ -406,6 +406,15 @@ button:focus-visible {
   overscroll-behavior: contain;
 }
 
+.item-table__items tr {
+  outline: none;
+}
+
+.item-table__items tr:focus-visible {
+  outline: 4px solid var(--color-focus);
+  outline-offset: -4px;
+}
+
 .item-table__empty {
   grid-column: 1 / -1;
 }

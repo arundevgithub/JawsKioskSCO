@@ -4,21 +4,18 @@ import ItemTable from './ItemTable'
 import { scanRandomItem } from '../api/mockApi'
 import { TAX_RATE } from '../data/catalog'
 
-const TARGET_ITEM_COUNT = 5
-
 export default function ScanningScreen({ items, onItemScanned, onProceedToPayment, onCancel, announce }) {
   const [isScanning, setIsScanning] = useState(false)
 
   const subtotal = round2(items.reduce((sum, item) => sum + item.price, 0))
   const tax = round2(subtotal * TAX_RATE)
   const total = round2(subtotal + tax)
-  const isDone = items.length >= TARGET_ITEM_COUNT
+  const hasItems = items.length > 0
 
   async function handleScan() {
-    if (isScanning || isDone) return
+    if (isScanning) return
     setIsScanning(true)
     const item = await scanRandomItem()
-    const isLastItem = items.length + 1 >= TARGET_ITEM_COUNT
     onItemScanned(item)
     setIsScanning(false)
 
@@ -27,9 +24,10 @@ export default function ScanningScreen({ items, onItemScanned, onProceedToPaymen
     const newTotal = round2(newSubtotal + round2(newSubtotal * TAX_RATE))
     const newCount = items.length + 1
     const countPhrase = `${newCount} ${newCount === 1 ? 'item' : 'items'}`
-    const itemPhrase = `${item.description}, ${formatMoney(item.price)}. ${countPhrase}, total due ${formatMoney(newTotal)}.`
-    // After the last scan, tell the user where to go next.
-    announce(isLastItem ? `${itemPhrase} Press Proceed to Payment to continue.` : itemPhrase)
+    // ItemTable focuses the new row, and JAWS reads the item's name from it;
+    // the live region adds its price and the running count and total.
+    const totalPhrase = `${formatMoney(item.price)}. ${countPhrase}, total due ${formatMoney(newTotal)}.`
+    announce(`${totalPhrase} Continue scanning or press Finished Scanning.`)
   }
 
   return (
@@ -44,7 +42,7 @@ export default function ScanningScreen({ items, onItemScanned, onProceedToPaymen
           tabIndex={-1}
           onMouseDown={(e) => e.preventDefault()}
           onClick={handleScan}
-          disabled={isScanning || isDone}
+          disabled={isScanning}
         >
           {isScanning ? 'Scanning…' : 'Simulate Barcode Scan'}
         </button>
@@ -54,9 +52,7 @@ export default function ScanningScreen({ items, onItemScanned, onProceedToPaymen
         <span id="scanning-heading">Scan Your Items</span>
       </ScreenHeading>
       <p className="screen-intro">
-        {isDone
-          ? 'All items have been scanned. Choose Proceed to Payment to continue.'
-          : 'Scan the barcode of each item on the scanner.'}
+        Scan the barcode of each item on the scanner. When you are done, choose Finished Scanning.
       </p>
 
       <ItemTable
@@ -68,12 +64,12 @@ export default function ScanningScreen({ items, onItemScanned, onProceedToPaymen
           { label: 'Estimated tax', value: tax },
           { label: 'Total due', value: total }
         ]}
-        scrollToNewest
+        focusNewest
       />
 
       <div className="button-row">
-        <button type="button" className="primary-button" onClick={onProceedToPayment} disabled={!isDone}>
-          Proceed to Payment
+        <button type="button" className="primary-button" onClick={onProceedToPayment} disabled={!hasItems}>
+          Finished Scanning
         </button>
         <button type="button" className="secondary-button" onClick={onCancel}>
           Cancel Transaction

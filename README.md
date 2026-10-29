@@ -17,8 +17,9 @@ no server and no real payment processing.
 4. **Scan items** — the shopper scans barcodes on the physical scanner. For
    testing, a "Simulate Barcode Scan" button (top-right, hidden from JAWS)
    stands in for the scanner, adding one
-   random product (one unit, with its name and price) until 5 items have
-   been scanned; subtotal/tax/total update live.
+   random product (one unit, with its name and price) per scan;
+   subtotal/tax/total update live. **Finished Scanning** is enabled once at
+   least one item has been scanned.
 5. **Payment** — "Pay with Credit Card" simulates sending the total to a
    card reader/processor and always approves after a short delay.
 6. **Receipt** — item count and totals (no item list) with payment and loyalty details;
@@ -104,10 +105,11 @@ can drive the whole transaction without sight:
    customer's name.
 5. Press Enter on **Begin Scanning Items**. A sighted helper then clicks
    **Simulate Barcode Scan** (top-right) in place of a real scanner — JAWS
-   should never land on or list that button. Each scan should announce the
-   item name and price; the 5th scan should also say to press Proceed to
-   Payment.
-6. Activate **Proceed to Payment**, then **Pay with Credit Card** — you
+   should never land on or list that button. Each scan should move the
+   virtual cursor to the new item's row and read it, then announce its
+   price, the item count and total, and say to continue scanning or press
+   Finished Scanning.
+6. Activate **Finished Scanning**, then **Pay with Credit Card** — you
    should hear a processing announcement, then an assertive "Payment
    approved" announcement that interrupts whatever was being read.
 7. On the receipt screen, verify the item count and totals read correctly
