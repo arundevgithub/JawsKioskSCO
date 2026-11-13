@@ -10,10 +10,14 @@ no server and no real payment processing.
 ## Flow implemented
 
 1. **Welcome** — large "Start Checkout" button.
-2. **Phone entry** — customer enters a 10-digit phone number with the
-   on-screen numpad (a kiosk has no keyboard) to look up a loyalty account.
-3. **Account found** — shows the matched customer's name, loyalty number,
-   and points balance.
+2. **Loyalty dialog** — Start Checkout opens the cart screen with a modal
+   dialog over it, where the customer enters a 10-digit phone number with
+   the on-screen numpad (a kiosk has no keyboard) to look up a loyalty
+   account, or chooses Skip. The page behind is inert while it's open, so
+   JAWS stays inside the dialog. If skipped, **Enter Loyalty Number** on the
+   cart reopens it.
+3. **Account found** — the dialog closes and the customer's name and points
+   balance are announced and shown on the cart.
 4. **Scan items** — the shopper scans barcodes on the physical scanner. For
    testing, a "Simulate Barcode Scan" button (top-right, hidden from JAWS)
    stands in for the scanner, adding one
@@ -96,14 +100,17 @@ can drive the whole transaction without sight:
 1. Start the app (`npm run dev`) and open it in the browser you intend to
    test with.
 2. Start your screen reader, then load/focus the page.
-3. Tab to **Start Checkout** and press Enter — confirm you hear the new
-   heading, "Find Your Loyalty Account," announced.
+3. Tab to **Start Checkout** and press Enter — confirm you hear the
+   "Find Your Loyalty Account" dialog and heading announced, and that the
+   virtual cursor, Tab and JAWS element lists stay inside the dialog.
 4. Tab into the on-screen keypad and press 10 digits — confirm each digit
    and the running count are announced, then Tab to
    **Find My Account** and press Enter. You should hear "Searching for your
-   loyalty account, please wait," then the "Account Found" heading plus the
-   customer's name.
-5. Press Enter on **Begin Scanning Items**. A sighted helper then clicks
+   loyalty account, please wait," then the dialog closes, focus moves to the
+   "Scan Your Items" heading and the customer's name and points are
+   announced. (Or choose **Skip**, and reopen it later with **Enter Loyalty
+   Number**.)
+5. A sighted helper then clicks
    **Simulate Barcode Scan** (top-right) in place of a real scanner — JAWS
    should never land on or list that button. Each scan should move the
    virtual cursor to the new item's row and read it, then announce its

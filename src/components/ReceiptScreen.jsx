@@ -25,7 +25,7 @@ export default function ReceiptScreen({ items, totals, payment, customer, onStar
         <span id="receipt-heading">Payment Approved</span>
       </ScreenHeading>
       <p className="screen-intro">
-        Thank you, {customer.firstName}! Choose Print Receipt or Start New
+        Thank you{customer ? `, ${customer.firstName}` : ''}! Choose Print Receipt or Start New
         Transaction.
       </p>
 
@@ -80,14 +80,19 @@ export default function ReceiptScreen({ items, totals, payment, customer, onStar
                 </div>
               </>
             )}
-            <div className="summary-row">
-              <dt>Loyalty number</dt>
-              <dd>{customer.loyaltyNumber}</dd>
-            </div>
-            <div className="summary-row">
-              <dt>Points earned this visit</dt>
-              <dd>{pointsEarned} points</dd>
-            </div>
+            {/* Only when the shopper entered a loyalty number; they can skip it. */}
+            {customer ? (
+              <>
+                <div className="summary-row">
+                  <dt>Loyalty number</dt>
+                  <dd>{customer.loyaltyNumber}</dd>
+                </div>
+                <div className="summary-row">
+                  <dt>Points earned this visit</dt>
+                  <dd>{pointsEarned} points</dd>
+                </div>
+              </>
+            ) : null}
           </dl>
         </div>
       </div>

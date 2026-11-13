@@ -4,7 +4,7 @@ import ItemTable from './ItemTable'
 import { scanRandomItem } from '../api/mockApi'
 import { TAX_RATE } from '../data/catalog'
 
-export default function ScanningScreen({ items, onItemScanned, onProceedToPayment, onCancel, announce }) {
+export default function ScanningScreen({ items, customer, onEnterLoyalty, onItemScanned, onProceedToPayment, onCancel, announce }) {
   const [isScanning, setIsScanning] = useState(false)
 
   const subtotal = round2(items.reduce((sum, item) => sum + item.price, 0))
@@ -54,6 +54,11 @@ export default function ScanningScreen({ items, onItemScanned, onProceedToPaymen
       <p className="screen-intro">
         Scan the barcode of each item on the scanner. When you are done, choose Finished Scanning.
       </p>
+      {customer ? (
+        <p className="screen-intro">
+          Loyalty account: {customer.firstName} {customer.lastName}, {customer.pointsBalance} points.
+        </p>
+      ) : null}
 
       <ItemTable
         caption="Scanned items"
@@ -71,6 +76,11 @@ export default function ScanningScreen({ items, onItemScanned, onProceedToPaymen
         <button type="button" className="primary-button" onClick={onProceedToPayment} disabled={!hasItems}>
           Finished Scanning
         </button>
+        {customer ? null : (
+          <button type="button" className="secondary-button" onClick={onEnterLoyalty}>
+            Enter Loyalty Number
+          </button>
+        )}
         <button type="button" className="secondary-button" onClick={onCancel}>
           Cancel Transaction
         </button>
